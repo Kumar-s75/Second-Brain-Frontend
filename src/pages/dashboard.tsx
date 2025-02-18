@@ -40,7 +40,7 @@ export function Dashboard() {
                     "Authorization": localStorage.getItem("token")
                   }
                 });
-                const shareUrl = `http://localhost:5173/share/${response.data.hash}`;
+                const shareUrl = `https://second-brain-frontend-two.vercel.app/share/${response.data.hash}`;
                 alert(shareUrl);
               } catch (error) {
                 console.error("Error sharing brain:", error);
