@@ -14,6 +14,7 @@ export function Dashboard() {
   const { contents = [], refresh } = useContent(); // Ensure contents is always an array
 
   useEffect(() => {
+    
     refresh();
   }, [modalOpen]);
 

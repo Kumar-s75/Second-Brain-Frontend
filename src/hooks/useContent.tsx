@@ -7,6 +7,7 @@ export function useContent() {
     // State to hold the fetched content
     const [contents, setContents] = useState([]);
 
+
     // Function to refresh and fetch content from the backend
     function refresh() {
         axios.get(`${BACKEND_URL}/api/v1/content`, { // Making GET request to the backend API
@@ -16,7 +17,9 @@ export function useContent() {
         })
             .then((response) => {
                 // If the request is successful, update the contents state with the fetched data
-                setContents(response.data.content);
+                // console.log("API Response:", response.data); 
+                //@ts-ignore
+                setContents([...response.data]);
             })
             .catch((error) => {
                 // Handle any error that occurs during the request (optional)
@@ -38,6 +41,7 @@ export function useContent() {
             clearInterval(interval); // Clears the interval when the component is removed from the DOM
         };
     }, []); // Empty dependency array ensures this effect runs only once when the component mounts
+    
 
     // Returning the contents and refresh function to be used in components that consume this hook
     return { contents, refresh };
