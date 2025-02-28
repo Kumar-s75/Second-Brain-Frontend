@@ -1,67 +1,55 @@
 import { ShareIcon } from "../icons/ShareIcon";
+import { TrashIcon } from "../icons/TrashIcon"; // Add a delete icon
 
 interface CardProps {
-    title: string; // Title of the card, e.g., video or tweet title
-    link: string; // Link to the content (YouTube or Twitter)
-    type: "twitter" | "youtube"; // Type of the content
+    type: "twitter" | "youtube";
+    link:string;
+    title: string;
+    content: string[];
+    tags: string[];
+    dateAdded: string;
 }
 
-// The Card component represents a styled card that can display either a YouTube video or a Twitter embed based on the type prop.
-export function Card({ title, link, type }: CardProps) {
+export function Card({ title, content, tags, dateAdded }: CardProps) {
     return (
-        <div>
-            {/* Card Container */}
-            <div className="p-4 bg-white rounded-md border-gray-200 max-w-72 border min-h-48 min-w-72">
-                {/* Header Section */}
-                <div className="flex justify-between">
-                    {/* Left Section: Title with Icon */}
-                    <div className="flex items-center text-md">
-                        <div className="text-gray-500 pr-2">
-                            {/* Share Icon preceding the title */}
-                            <ShareIcon />
-                        </div>
-                        {title}
-                    </div>
-                    {/* Right Section: Links with Icons */}
-                    <div className="flex items-center">
-                        <div className="pr-2 text-gray-500">
-                            {/* Clickable Share Icon that opens the link */}
-                            <a href={link} target="_blank">
-                                <ShareIcon />
-                            </a>
-                        </div>
-                        <div className="text-gray-500">
-                            {/* Placeholder for another Share Icon */}
-                            <ShareIcon />
-                        </div>
-                    </div>
+        <div className="p-4 bg-white rounded-xl border border-gray-200 shadow-sm max-w-80 min-h-48">
+            {/* Header Section */}
+            <div className="flex justify-between items-center mb-3">
+                <div className="flex items-center space-x-2 text-gray-600 text-sm font-medium">
+                    📂 {title}
                 </div>
-
-                {/* Content Section */}
-                <div className="pt-4">
-                    {/* Render YouTube embed if type is "youtube" */}
-                    {type === "youtube" && (
-                        <iframe
-                            className="w-full"
-                            src={link
-                                .replace("watch", "embed")
-                                .replace("?v=", "/")}
-                            title="YouTube video player"
-                            frameBorder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                            referrerPolicy="strict-origin-when-cross-origin"
-                            allowFullScreen
-                        ></iframe>
-                    )}
-
-                    {/* Render Twitter embed if type is "twitter" */}
-                    {type === "twitter" && (
-                        <blockquote className="twitter-tweet">
-                            <a href={link.replace("x.com", "twitter.com")}></a>
-                        </blockquote>
-                    )}
+               
+                <div className="flex space-x-2 text-gray-400">
+                    
+                    <ShareIcon  />
+                    <TrashIcon  />
                 </div>
             </div>
+
+            {/* Main Content */}
+            <h2 className="text-lg font-semibold text-gray-900 mb-2">Future Projects</h2>
+            <ul className="text-gray-700 text-sm space-y-1">
+                {content.map((item, index) => (
+                    <li key={index} className="flex items-start">
+                        • {item}
+                    </li>
+                ))}
+            </ul>
+
+            {/* Tags Section */}
+            <div className="flex flex-wrap gap-2 mt-3">
+                {tags.map((tag, index) => (
+                    <span
+                        key={index}
+                        className="bg-blue-100 text-blue-700 text-xs font-medium px-3 py-1 rounded-full"
+                    >
+                        #{tag}
+                    </span>
+                ))}
+            </div>
+
+            {/* Footer */}
+            <p className="text-gray-400 text-xs mt-4">Added on {dateAdded}</p>
         </div>
     );
 }
