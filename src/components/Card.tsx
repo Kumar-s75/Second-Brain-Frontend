@@ -27,7 +27,7 @@ export function Card({ title, content, tags, dateAdded }: CardProps) {
             </div>
 
             {/* Main Content */}
-            <h2 className="text-lg font-semibold text-gray-900 mb-2">Future Projects</h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-2">{title}</h2>
             <ul className="text-gray-700 text-sm space-y-1">
                 {content.map((item, index) => (
                     <li key={index} className="flex items-start">

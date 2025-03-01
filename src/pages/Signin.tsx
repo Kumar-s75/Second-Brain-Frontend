@@ -1,52 +1,111 @@
-import { useRef } from "react"; // Importing useRef for referencing DOM elements
-import { Button } from "../components/Button"; // Importing Button component for the submit button
-import { Input } from "../components/Input"; // Importing Input component for form fields
-import { BACKEND_URL } from "../config"; // Importing the backend URL from config
-import axios from "axios"; // Importing axios for making HTTP requests
-import { useNavigate } from "react-router-dom"; // Importing useNavigate hook for routing
+import { useRef } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { BrainCog, ArrowLeft } from "lucide-react";
+import axios from "axios";
+import { BACKEND_URL } from "../config";
 
-// Signin component to handle user login
 export function Signin() {
-    // References for the username and password input fields
-    const usernameRef = useRef<HTMLInputElement>(); 
-    const passwordRef = useRef<HTMLInputElement>();
-
-    // useNavigate hook for navigating to different routes
+    const usernameRef = useRef<HTMLInputElement>(null);
+    const passwordRef = useRef<HTMLInputElement>(null);
     const navigate = useNavigate();
 
-    // signin function to handle user authentication
-    async function signin() {
-        const username = usernameRef.current?.value; // Get the value from the username input field
-        console.log(usernameRef.current); // Log the username reference for debugging (optional)
-        const password = passwordRef.current?.value; // Get the value from the password input field
+    async function signin(event: React.FormEvent) {
+        event.preventDefault(); // Prevents page reload
 
-        // Send POST request to the backend API for signin
-        const response = await axios.post(BACKEND_URL + "/api/v1/signin", {
-            username, // Send username as part of the request
-            password  // Send password as part of the request
-        });
+        const username = usernameRef.current?.value;
+        const password = passwordRef.current?.value;
 
-        // Extract the JWT token from the response and store it in localStorage
-        const jwt = response.data.token;
-        localStorage.setItem("token", jwt);
+        if (!username || !password) {
+            alert("Please enter both username and password.");
+            return;
+        }
 
-        // Redirect to the dashboard page after successful signin
-        navigate("/dashboard");
+        try {
+            const response = await axios.post(
+                BACKEND_URL + "/api/v1/signin",
+                { username, password }, // ✅ Corrected key from `email` to `username`
+                { withCredentials: true }
+            );
+
+            const jwt = response.data?.token;
+            if (!jwt) {
+                throw new Error("Token not found in response");
+            }
+
+            localStorage.setItem("token", jwt);
+            navigate("/dashboard"); // Redirect after successful login
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                console.error("Signin failed:", error.response?.data || error.message);
+                alert(error.response?.data?.message || "Signin failed. Please check your credentials.");
+            } else {
+                console.error("An unexpected error occurred:", error);
+                alert("An unexpected error occurred. Please try again.");
+            }
+        }
     }
 
-    // JSX to render the signin form
     return (
-        <div className="h-screen w-screen bg-gray-200 flex justify-center items-center">
-            <div className="bg-white rounded-xl border min-w-48 p-8">
-                {/* Input for username */}
-                <Input reference={usernameRef} placeholder="Username" />
-                
-                {/* Input for password */}
-                <Input reference={passwordRef} placeholder="Password" />
+        <div className="min-h-screen bg-gradient-to-br from-fuchsia-50 via-purple-50 to-indigo-50 dark:from-gray-900 dark:via-purple-950 dark:to-indigo-950 flex flex-col overflow-hidden">
+            <div className="container mx-auto px-4 py-6">
+                <Link to="/" className="inline-flex items-center gap-2 text-gray-700 hover:text-purple-600 dark:text-gray-300 dark:hover:text-purple-400 transition-colors">
+                    <ArrowLeft className="h-4 w-4" />
+                    Back to Home
+                </Link>
+            </div>
 
-                {/* Submit button */}
-                <div className="flex justify-center pt-4">
-                    <Button onClick={signin} loading={false} variant="primary" text="Signin" fullWidth={true} />
+            <div className="flex-1 flex items-center justify-center px-4 py-12">
+                <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 border border-purple-100 dark:border-gray-700">
+                    <div className="flex justify-center mb-6">
+                        <BrainCog className="h-8 w-8 text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500" />
+                        <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500">
+                            BrainApp
+                        </span>
+                    </div>
+
+                    <h1 className="text-2xl font-bold text-center mb-6 text-gray-900 dark:text-white">Welcome back</h1>
+
+                    <form className="space-y-4" onSubmit={signin}>
+                        <div className="space-y-2">
+                            <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Username
+                            </label>
+                            <input
+                                id="username"
+                                type="text"
+                                ref={usernameRef}
+                                placeholder="Enter your username"
+                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Password
+                            </label>
+                            <input
+                                id="password"
+                                type="password"
+                                ref={passwordRef}
+                                placeholder="Enter your password"
+                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
+                            />
+                        </div>
+
+                        <button
+                            type="submit"
+                            className="w-full py-2 px-4 border border-transparent rounded-lg text-sm font-medium text-white bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:from-pink-600 hover:via-purple-600 hover:to-indigo-600 shadow-lg transition-all duration-300"
+                        >
+                            Sign In
+                        </button>
+                    </form>
+
+                    <div className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
+                        Don't have an account?{" "}
+                        <Link to="/signup" className="text-purple-600 hover:text-purple-700 dark:text-purple-400 font-medium">
+                            Sign up
+                        </Link>
+                    </div>
                 </div>
             </div>
         </div>
