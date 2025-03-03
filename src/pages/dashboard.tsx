@@ -298,7 +298,10 @@ export function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-purple-50 dark:from-background dark:to-background text-foreground">
-      <CreateContentModal open={modalOpen} onClose={() => setModalOpen(false)} />
+      <CreateContentModal open={modalOpen} onClose={() =>{
+     setModalOpen(false)
+     refresh();   
+      }} />
 
       {/* Header */}
       <header className="w-full py-4 px-6 flex justify-between items-center border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
